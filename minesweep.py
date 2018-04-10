@@ -6,7 +6,37 @@ import pandas as pd
 import sys
 import random
 
-BOARD_VECTOR_LENGTH = 100
+# define board size and number of bombs
+BOARD_SIZE_X = 5
+BOARD_SIZE_Y = 5
+NUMBER_OF_BOMBS = 4
+FIRST_CHOICE_FREE = True
+
+# define individual rewards after each step/game
+REWARD_GAME_WON = 100
+REWARD_GAME_LOST = -10
+
+REWARD_ZERO_FIELD = 1
+REWARD_NUMBER_FIELD = 1
+REWARD_ALREADY_SHOWN_FIELD = -100
+
+# calculate actual input vector size
+BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
+
+# enable debug print
+DEBUG_PRINT = False
+
+class RMPlayer(object):
+    def __init__(self):
+        super().__init__()
+
+    def get_action(self, state):
+        action = np.random.choice(list(range(0,BOARD_VECTOR_LENGTH)))
+        return action
+
+    def update(self,new_state,reward):
+        #do nothing
+        i = 0
 
 class DQNLearner(object):
     def __init__(self):
@@ -75,14 +105,23 @@ class MineSweeper(object):
     dimX = 0
     dimY = 0
     game = 0
+    win = 0
+    loss = 0
+    _first_move = True
+    _report_every = 0
+    _num_learning_rounds = 0
     over = False
 
     # Creates two fields, one containing bombs and one that is hidden
-    def __init__(self, dimX=3, dimY=3, bombs=1, learner=None):
+    def __init__(self, num_learn_rounds, dimX=3, dimY=3, bombs=1, learner=None, report_every=100):
         self.dimX = dimX
         self.dimY = dimY
         self.bombs = bombs
         self.p = learner
+        self.loss = 0
+        self.win = 0
+        self._report_every = report_every
+        self._num_learning_rounds = num_learn_rounds
 
         if self.p is None:
             self.p = DQNLearner()
@@ -91,9 +130,10 @@ class MineSweeper(object):
 
         self.reset()
     
-    def reset(self):
+    def reset(self, choiceX=-1, choiceY=-1):
         random.seed()
         self.over = False
+        self._first_move = True
 
         self.fieldsToPick = self.dimX*self.dimY - self.bombs
         self.field = np.zeros((self.dimX,self.dimY))
@@ -103,16 +143,22 @@ class MineSweeper(object):
         while i>0:
             x = random.randint(0,self.dimX-1)
             y = random.randint(0,self.dimY-1)
-
             if self.field[x][y] != self.BOMB:
-                self.field[x][y] = self.BOMB
-                i -= 1
+                if choiceX > 0 and choiceY > 0:
+                    if choiceX!=x and choiceY!=y:
+                        self.field[x][y] = self.BOMB
+                        i -= 1
+                else:
+                    self.field[x][y] = self.BOMB
+                    i -= 1
 
         # calc nearby bomb fields
         for x in range(0,self.dimX):
             for y in range(0,self.dimY):
                 self.field[x][y] = self.fieldValue(x,y)
 
+        #if FIRST_CHOICE_FREE:
+#            self.pickField(choiceX,choiceY)
         #self.showVisibleField()
     
     def fieldValue(self, x,y):
@@ -164,33 +210,41 @@ class MineSweeper(object):
             return False
 
     def pickField(self, x, y):
+        if FIRST_CHOICE_FREE and self._first_move==True:
+            self.reset(x,y)
+            self._first_move = False
         if self.hasBomb(x,y):
-            print("You loose!")
+            if DEBUG_PRINT:
+                print("You loose!")
             self.over = True
-            return -10
+            return REWARD_GAME_LOST
         else:
+            show = False
             if self.visibleField[x][y] == 99:
-                self.showVisibleField()
+                show = True
+            else:
+                return REWARD_ALREADY_SHOWN_FIELD
             self.updateVisibleField(x,y)
+            if show and DEBUG_PRINT:
+                self.showVisibleField()
             if self.bombs==self.countUncovered():
-                print("You win!")
+                if DEBUG_PRINT:
+                    print("You win!")
                 self.over = True
-                return 10
+                return REWARD_GAME_WON
             else:
                 if self.field[x][y] == 0:
-                    return 5
+                    return REWARD_ZERO_FIELD
                 else:
-                    return 1
+                    return REWARD_NUMBER_FIELD
 
     def pickFieldByVector(self, v):
         v = np.reshape(v,(self.dimX,self.dimY))
         coodX = -1
         coodY = -1
-        count = 0
         for x in range(0,self.dimX):
             for y in range(0,self.dimY):
                 if v[x][y] == 1 and self.visibleField[x][y] == 99:
-                    count += 1
                     coodX = x
                     coodY = y
         return self.pickField(coodX,coodY)
@@ -210,7 +264,8 @@ class MineSweeper(object):
         self.reset()
         state = self.visibleField
 
-        print("game: {}".format(self.game))
+        if DEBUG_PRINT:
+            print("game: {}".format(self.game))
     
         while True:
             # Determine hit/stay
@@ -227,19 +282,28 @@ class MineSweeper(object):
         
             self.p.update(self.visibleField,reward) # Update the learner with a reward of 0 (No change)
 
+        if self.bombs==self.countUncovered():
+            self.win += 1
+        else:
+            self.loss += 1
+
         self.game += 1
 
+        self.report()
 
-game = MineSweeper(10,10,6)
-#game.play()
-# while game.isRunning():
-#     v = np.zeros(9)
-#     v[random.randint(0,8)] = 1
-#     print(np.reshape(v,(3,3)))
-#     game.pickFieldByVector(v)
+    def report(self):
+        if self.game % self._num_learning_rounds == 0:
+            print(str(self.game) +" : "  +str(self.win / (self.win + self.loss)))
+        elif self.game % self._report_every == 0:
+            print(str(self.win / (self.win + self.loss)))
 
-num_learning_rounds = 2
-#game = Game(num_learning_rounds, Learner()) #Q learner
-number_of_test_rounds = 1
+num_learning_rounds = 20000
+number_of_test_rounds = 1000
+
+game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS)
+#game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
+
 for k in range(0,num_learning_rounds + number_of_test_rounds):
     game.run()
+
+#game.play()
