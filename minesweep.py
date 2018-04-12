@@ -7,18 +7,18 @@ import sys
 import random
 
 # define board size and number of bombs
-BOARD_SIZE_X = 4
-BOARD_SIZE_Y = 4
-NUMBER_OF_BOMBS = 1
-FIRST_CHOICE_FREE = True
+BOARD_SIZE_X = 5
+BOARD_SIZE_Y = 5
+NUMBER_OF_BOMBS = 3
+FIRST_CHOICE_FREE = False
 
 # define individual rewards after each step/game
 REWARD_GAME_WON = 10
 REWARD_GAME_LOST = -10
 
-REWARD_ZERO_FIELD = 2
+REWARD_ZERO_FIELD = 5
 REWARD_NUMBER_FIELD = 2
-REWARD_ALREADY_SHOWN_FIELD = -50
+REWARD_ALREADY_SHOWN_FIELD = -100
 
 # calculate actual input vector size
 BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
@@ -43,8 +43,8 @@ class DQNLearner(object):
         super().__init__()
         self._last_target = None
         self._learning = True
-        self._learning_rate = .1
-        self._discount = .1
+        self._learning_rate = .01
+        self._discount = .2
         self._epsilon = .9
         self._last_action = None
         self._last_state = None
@@ -53,10 +53,10 @@ class DQNLearner(object):
         # Create Model
         model = Sequential()
 
-        model.add(Dense(40, kernel_initializer='lecun_uniform', input_shape=(BOARD_VECTOR_LENGTH,)))
+        model.add(Dense(20, kernel_initializer='lecun_uniform', input_shape=(BOARD_VECTOR_LENGTH,)))
         model.add(Activation('relu'))
 
-        model.add(Dense(40, kernel_initializer='lecun_uniform'))
+        model.add(Dense(50, kernel_initializer='lecun_uniform'))
         model.add(Activation('relu'))
 
         model.add(Dense(BOARD_VECTOR_LENGTH, kernel_initializer='lecun_uniform'))
@@ -77,6 +77,7 @@ class DQNLearner(object):
         
         self._last_target = rewards
         self._last_state = state
+        self._last_action = action
         return action
 
     def update(self,new_state,reward):
@@ -151,14 +152,15 @@ class MineSweeper(object):
                 else:
                     self.field[x][y] = self.BOMB
                     i -= 1
+        #self.field[0][1] = self.BOMB
 
         # calc nearby bomb fields
         for x in range(0,self.dimX):
             for y in range(0,self.dimY):
                 self.field[x][y] = self.fieldValue(x,y)
 
-        #if FIRST_CHOICE_FREE:
-#            self.pickField(choiceX,choiceY)
+        if DEBUG_PRINT:
+            self.showVisibleField()
     
     def fieldValue(self, x,y):
         if self.hasBomb(x,y):
@@ -209,12 +211,15 @@ class MineSweeper(object):
             return False
 
     def pickField(self, x, y):
+        if DEBUG_PRINT:
+            print("choice: {},{}".format(x,y))
         if FIRST_CHOICE_FREE and self._first_move==True:
             self.reset(x,y)
             self._first_move = False
         if self.hasBomb(x,y):
             if DEBUG_PRINT:
                 print("You loose!")
+                self.showField()
             self.over = True
             self.loss += 1
             return REWARD_GAME_LOST
@@ -230,6 +235,7 @@ class MineSweeper(object):
             if self.bombs==self.countUncovered():
                 if DEBUG_PRINT:
                     print("You win!")
+                    self.showField()
                 self.over = True
                 self.win += 1
                 return REWARD_GAME_WON
@@ -295,10 +301,10 @@ class MineSweeper(object):
 num_learning_rounds = 20000
 number_of_test_rounds = 1000
 
-game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS)
+game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100)
 #game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
-
-for k in range(0,num_learning_rounds + number_of_test_rounds):
+total = num_learning_rounds + number_of_test_rounds
+for k in range(0,total):
     game.run()
 
 #game.play()
