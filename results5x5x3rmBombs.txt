@@ -1,6 +1,13 @@
 Q-Learner:
 
-20000 : 0.1283
+20000 : 0.16155 (alpha=0.1, discount = 0.2, epsilon=0.9, layers: 50:100)
+20000 : 0.17045 (alpha=0.1, discount = 0.2, epsilon=0.9, layers: 100:50)
+20000 : 0.18715 (alpha=0.2, discount = 0.2, epsilon=0.9, layers: 100:50)
+20000 : 0.168 (alpha=0.5, discount = 0.2, epsilon=0.9, layers: 100:50)
+20000 : 0.1635 (alpha=0.3, discount = 0.2, epsilon=0.9, layers: 150:50)
+20000 : 0.17605 (alpha=0.3, discount = 0.2, epsilon=0.9, layers: 100:50)
+
+50000 : 0.17516 (alpha=0.01, discount = 0.2, epsilon=0.9, layers: 100:50)
 
 Random:
 

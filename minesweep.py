@@ -53,7 +53,7 @@ class DQNLearner(object):
         # Create Model
         model = Sequential()
 
-        model.add(Dense(20, kernel_initializer='lecun_uniform', input_shape=(BOARD_VECTOR_LENGTH,)))
+        model.add(Dense(100, kernel_initializer='lecun_uniform', input_shape=(BOARD_VECTOR_LENGTH,)))
         model.add(Activation('relu'))
 
         model.add(Dense(50, kernel_initializer='lecun_uniform'))
@@ -298,7 +298,7 @@ class MineSweeper(object):
         elif self.game % self._report_every == 0:
             print(str(self.win / (self.win + self.loss)))
 
-num_learning_rounds = 20000
+num_learning_rounds = 50000
 number_of_test_rounds = 1000
 
 game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100)
