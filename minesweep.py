@@ -7,18 +7,18 @@ import sys
 import random
 
 # define board size and number of bombs
-BOARD_SIZE_X = 5
-BOARD_SIZE_Y = 5
-NUMBER_OF_BOMBS = 4
+BOARD_SIZE_X = 3
+BOARD_SIZE_Y = 3
+NUMBER_OF_BOMBS = 1
 FIRST_CHOICE_FREE = True
 
 # define individual rewards after each step/game
 REWARD_GAME_WON = 100
-REWARD_GAME_LOST = -10
+REWARD_GAME_LOST = 0
 
-REWARD_ZERO_FIELD = 1
-REWARD_NUMBER_FIELD = 1
-REWARD_ALREADY_SHOWN_FIELD = -100
+REWARD_ZERO_FIELD = 10
+REWARD_NUMBER_FIELD = 10
+REWARD_ALREADY_SHOWN_FIELD = 0
 
 # calculate actual input vector size
 BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
@@ -53,13 +53,13 @@ class DQNLearner(object):
         # Create Model
         model = Sequential()
 
-        model.add(Dense(2, init='lecun_uniform', input_shape=(BOARD_VECTOR_LENGTH,)))
+        model.add(Dense(24, kernel_initializer='lecun_uniform', input_shape=(BOARD_VECTOR_LENGTH,)))
         model.add(Activation('relu'))
 
-        model.add(Dense(10, init='lecun_uniform'))
+        model.add(Dense(24, kernel_initializer='lecun_uniform'))
         model.add(Activation('relu'))
 
-        model.add(Dense(4, init='lecun_uniform'))
+        model.add(Dense(BOARD_VECTOR_LENGTH, kernel_initializer='lecun_uniform'))
         model.add(Activation('linear'))
 
         rms = RMSprop()
@@ -300,8 +300,8 @@ class MineSweeper(object):
 num_learning_rounds = 20000
 number_of_test_rounds = 1000
 
-game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS)
-#game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
+#game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS)
+game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
 
 for k in range(0,num_learning_rounds + number_of_test_rounds):
     game.run()
