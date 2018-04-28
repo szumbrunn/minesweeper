@@ -1,5 +1,4 @@
-from keras import Model, Input
-from keras.layers import Conv2D, Multiply
+from keras.layers import Conv2D, Conv1D
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation
 from keras.optimizers import RMSprop
@@ -48,84 +47,57 @@ class DQNLearner(object):
         self._learning_rate = .01
         self._discount = .2
         self._epsilon = .9
-        self._last_action_x = None
-        self._last_action_y = None
+        self._last_action = None
         self._last_state = None
 
 
         # Create Model
-       # model = Sequential()
+        model = Sequential()
 
-        inputShape = (1, BOARD_SIZE_X,BOARD_SIZE_Y)  # 11 channels
+        model.add(Conv2D(5,2,1, activation="relu", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
 
-        in1 = Input(shape=inputShape)
-        in2 = Input(shape=(1, BOARD_SIZE_X, BOARD_SIZE_Y))
-        conv = Conv2D(64, (3, 3), padding='same', data_format='channels_first', activation='relu', use_bias=True)(in1)
-        conv = Conv2D(64, (3, 3), padding='same', data_format='channels_first', activation='relu', use_bias=True)(conv)
-        conv = Conv2D(64, (3, 3), padding='same', data_format='channels_first', activation='relu', use_bias=True)(conv)
-        conv = Conv2D(64, (3, 3), padding='same', data_format='channels_first', activation='relu', use_bias=True)(conv)
-        conv = Conv2D(64, (3, 3), padding='same', data_format='channels_first', activation='relu', use_bias=True)(conv)
-        conv = Conv2D(1, (1, 1), padding='same', data_format='channels_first', activation='sigmoid', use_bias=True)(
-            conv)
-        out = Multiply()([conv, in2])
-        model = Model(inputs=[in1, in2], outputs=out)
-        model.compile(loss='binary_crossentropy', optimizer='adam')
+        model.add(Dense(100, kernel_initializer='lecun_uniform'))
+        model.add(Activation('relu'))
 
+        model.add(Dense(50, kernel_initializer='lecun_uniform'))
+        model.add(Activation('relu'))
 
+        model.add(Dense(BOARD_VECTOR_LENGTH, kernel_initializer='lecun_uniform'))
+        model.add(Activation('linear'))
 
-      #  model.add(Conv2D(1,1,1, activation="relu", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
-
-
-
-#        model.add(Dense(100, kernel_initializer='lecun_uniform'))
-#        model.add(Activation('relu'))
-#
-#        model.add(Dense(50, kernel_initializer='lecun_uniform'))
-#        model.add(Activation('relu'))
-#
-#        model.add(Dense(BOARD_VECTOR_LENGTH, kernel_initializer='lecun_uniform'))
-#        model.add(Activation('linear'))
-
-        #rms = RMSprop()
-        #model.compile(loss='mse', optimizer=rms)
+        rms = RMSprop()
+        model.compile(loss='mse', optimizer=rms)
 
         self._model = model
 
     def get_action(self, state):
         # state = state.flatten()
-      #  state = np.expand_dims(state, axis=2)
-        rewards = self._model.predict(state, batch_size=1)
+        print(type(state))
+        state = np.expand_dims(state, axis=2)
+        rewards = self._model.predict(np.expand_dims(state, axis=0), batch_size=1)
         if np.random.uniform(0,1) < self._epsilon:
-            #action = np.argmax(rewards[0])
-            action_x = int(int(np.argmax(rewards[0])) / int(BOARD_SIZE_X))
-            action_y = int(np.argmax(rewards[0]) % BOARD_SIZE_Y)
-
-
+            action = np.argmax(rewards[0])
         else:
-            action_x = np.random.choice(list(range(0, BOARD_SIZE_X)))
-            action_y = np.random.choice(list(range(0, BOARD_SIZE_Y)))
-
+            action = np.random.choice(list(range(0,BOARD_VECTOR_LENGTH)))
+        
         self._last_target = rewards
         self._last_state = state
-        self._last_action_x = action_x
-        self._last_action_y = action_y
-        return action_x, action_y
+        self._last_action = action
+        return action
 
-    def update(self,new_state,reward):
-#        new_state = new_state.flatten()
+    def update(self,new_state,np.expand_dimsreward):
+        new_state = new_state.flatten()
         if self._learning:
-       #     new_state = np.expand_dims(new_state, axis=2)
-            rewards = self._model.predict(new_state, axis=0, batch_size=1)
+            rewards = self._model.predict([np.array([new_state])], batch_size=1, verbose=1)
             maxQ = np.max(rewards[0])
             new = self._discount * maxQ
-            
-            self._last_target[0][self._last_action_x][self._last_action_y] = reward+new
-    
+
+            self._last_target[0][self._last_action] = reward+new
+            s
             # Update model
-            self._model.fit(np.array([self._last_state]), 
-                            self._last_target, 
-                            batch_size=1, 
-                            epochs=1, 
+            self._model.fit(np.array([self._last_state]),
+                            batch_size=1, ._last_state]),
+                            epochs=1,
                             verbose=0)
 
 # Basic class for main sweeper game, currently supports inputs by command line
@@ -308,11 +280,11 @@ class MineSweeper(object):
     
         while True:
             # Determine hit/stay
-            p1_action_x, p1_action_y = self.p.get_action(state)
+            p1_action = self.p.get_action(state)
         
             # Apply the action if hit
             v = np.zeros((BOARD_SIZE_X,BOARD_SIZE_Y))    #(BOARD_VECTOR_LENGTH)
-            v[p1_action_x][p1_action_y] = 1
+            v[p1_action] = 1
             reward = self.pickFieldByVector(v)
             self.p.update(self.visibleField,reward) # Update the learner with a reward of 0 (No change)
 
