@@ -1,5 +1,5 @@
-from keras import Model, Input
-from keras.layers import Conv2D, Multiply
+from keras import Input
+from keras.layers import Conv2D, Conv2DTranspose
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation
 from keras.optimizers import RMSprop
@@ -54,26 +54,21 @@ class DQNLearner(object):
 
 
         # Create Model
-       # model = Sequential()
+        model = Sequential()
 
-        inputShape = (1, BOARD_SIZE_X,BOARD_SIZE_Y)  # 11 channels
+        model.add(Conv2D(5, 3, strides=2, activation="relu", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y,1)))
 
-        in1 = Input(shape=inputShape)
-        in2 = Input(shape=(1, BOARD_SIZE_X, BOARD_SIZE_Y))
-        conv = Conv2D(64, (3, 3), padding='same', data_format='channels_first', activation='relu', use_bias=True)(in1)
-        conv = Conv2D(64, (3, 3), padding='same', data_format='channels_first', activation='relu', use_bias=True)(conv)
-        conv = Conv2D(64, (3, 3), padding='same', data_format='channels_first', activation='relu', use_bias=True)(conv)
-        conv = Conv2D(64, (3, 3), padding='same', data_format='channels_first', activation='relu', use_bias=True)(conv)
-        conv = Conv2D(64, (3, 3), padding='same', data_format='channels_first', activation='relu', use_bias=True)(conv)
-        conv = Conv2D(1, (1, 1), padding='same', data_format='channels_first', activation='sigmoid', use_bias=True)(
-            conv)
-        out = Multiply()([conv, in2])
-        model = Model(inputs=[in1, in2], outputs=out)
-        model.compile(loss='binary_crossentropy', optimizer='adam')
+        model.add(Conv2D(1, 2, strides=1, activation="relu"))
+
+        model.add(Conv2DTranspose(1, 5, strides=1))
+
+        model.add(Dense(1,activation="relu"))
 
 
 
-      #  model.add(Conv2D(1,1,1, activation="relu", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
+
+
+#        model.add(Conv2D(5,3,2, activation="relu", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
 
 
 
@@ -86,20 +81,19 @@ class DQNLearner(object):
 #        model.add(Dense(BOARD_VECTOR_LENGTH, kernel_initializer='lecun_uniform'))
 #        model.add(Activation('linear'))
 
-        #rms = RMSprop()
-        #model.compile(loss='mse', optimizer=rms)
+        rms = RMSprop()
+        model.compile(loss='mse', optimizer=rms)
 
         self._model = model
 
     def get_action(self, state):
         # state = state.flatten()
-      #  state = np.expand_dims(state, axis=2)
-        rewards = self._model.predict(state, batch_size=1)
+        state = np.expand_dims(state, axis=2)
+        rewards = self._model.predict(np.expand_dims(state, axis=0), batch_size=1)
         if np.random.uniform(0,1) < self._epsilon:
             #action = np.argmax(rewards[0])
             action_x = int(int(np.argmax(rewards[0])) / int(BOARD_SIZE_X))
             action_y = int(np.argmax(rewards[0]) % BOARD_SIZE_Y)
-
 
         else:
             action_x = np.random.choice(list(range(0, BOARD_SIZE_X)))
@@ -114,8 +108,8 @@ class DQNLearner(object):
     def update(self,new_state,reward):
 #        new_state = new_state.flatten()
         if self._learning:
-       #     new_state = np.expand_dims(new_state, axis=2)
-            rewards = self._model.predict(new_state, axis=0, batch_size=1)
+            new_state = np.expand_dims(new_state, axis=2)
+            rewards = self._model.predict(np.expand_dims(new_state, axis=0), batch_size=1)
             maxQ = np.max(rewards[0])
             new = self._discount * maxQ
             
@@ -333,7 +327,7 @@ class MineSweeper(object):
 num_learning_rounds = 50000
 number_of_test_rounds = 1000
 
-game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100)
+game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=10)
 #game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
 total = num_learning_rounds + number_of_test_rounds
 for k in range(0,total):
