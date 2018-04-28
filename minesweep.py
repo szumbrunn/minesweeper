@@ -327,7 +327,7 @@ class MineSweeper(object):
 num_learning_rounds = 50000
 number_of_test_rounds = 1000
 
-game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=10)
+game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100e)
 #game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
 total = num_learning_rounds + number_of_test_rounds
 for k in range(0,total):
