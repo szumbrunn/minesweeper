@@ -15,12 +15,12 @@ NUMBER_OF_BOMBS = 3
 FIRST_CHOICE_FREE = False
 
 # define individual rewards after each step/game
-REWARD_GAME_WON = 10
-REWARD_GAME_LOST = -10
+REWARD_GAME_WON = 1 #10
+REWARD_GAME_LOST = -1 #-10
 
 REWARD_ZERO_FIELD = 5
 REWARD_NUMBER_FIELD = 2
-REWARD_ALREADY_SHOWN_FIELD = -100
+REWARD_ALREADY_SHOWN_FIELD = -2  # -100
 
 # calculate actual input vector size
 BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
@@ -60,7 +60,7 @@ class DQNLearner(object):
 
         model.add(Conv2D(1, 2, strides=1, activation="relu"))
 
-        model.add(Conv2DTranspose(1, 5, strides=1))
+        model.add(Conv2DTranspose(1, 5, strides=1, activation="relu"))
 
         model.add(Dense(1,activation="relu"))
 
@@ -124,10 +124,10 @@ class DQNLearner(object):
 
 # Basic class for main sweeper game, currently supports inputs by command line
 class MineSweeper(object):
-    BOMB = 9
+    BOMB = -1/100.0 
     EMPTY = 0
-    FLAGGED = 10
-    COVERED = 99
+    FLAGGED = 10/100.0
+    COVERED = 99/100.0
     fieldsToPick = 0
     dimX = 0
     dimY = 0
@@ -190,7 +190,7 @@ class MineSweeper(object):
     
     def fieldValue(self, x,y):
         if self.hasBomb(x,y):
-            return 9
+            return self.BOMB
         count = 0
         for a in range(max(x-1,0), min(x+2,self.dimX)):
             for b in range(max(y-1,0),min(y+2,self.dimY)):
@@ -198,7 +198,7 @@ class MineSweeper(object):
         return count
 
     def hasBomb(self, x,y):
-        if self.field[x][y]==9:
+        if self.field[x][y]==self.BOMB:
             return True
         else:
             return False
@@ -223,7 +223,7 @@ class MineSweeper(object):
             for a in range(max(x-1,0), min(x+2,self.dimX)):
                 for b in range(max(y-1,0),min(y+2,self.dimY)):
                     #if a in range(0,self.dimX) and b in range(0,self.dimY) and a!=x and b!=y:
-                    if self.visibleField[a][b]==99:
+                    if self.visibleField[a][b]==self.COVERED: #99:
                         if self.field[a][b]<9 and self.field[a][b]>0:
                             self.visibleField[a][b] = self.field[a][b]
                             self.fieldsToPick -= 1
@@ -251,7 +251,7 @@ class MineSweeper(object):
             return REWARD_GAME_LOST
         else:
             show = False
-            if self.visibleField[x][y] == 99:
+            if self.visibleField[x][y] == self.COVERED: #99:
                 show = True
             else:
                 return REWARD_ALREADY_SHOWN_FIELD
@@ -285,7 +285,7 @@ class MineSweeper(object):
 
     def countUncovered(self):
         unique, counts = np.unique(self.visibleField, return_counts=True)
-        return dict(zip(unique, counts))[99]
+        return dict(zip(unique, counts))[self.COVERED]
 
     def play(self):
         while game.isRunning():
@@ -327,7 +327,7 @@ class MineSweeper(object):
 num_learning_rounds = 50000
 number_of_test_rounds = 1000
 
-game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100e)
+game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100)
 #game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
 total = num_learning_rounds + number_of_test_rounds
 for k in range(0,total):
