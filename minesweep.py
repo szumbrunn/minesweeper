@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import sys
 import random
+from datetime import datetime 
 
 # define board size and number of bombs
 BOARD_SIZE_X = 5
@@ -15,18 +16,26 @@ NUMBER_OF_BOMBS = 3
 FIRST_CHOICE_FREE = False
 
 # define individual rewards after each step/game
-REWARD_GAME_WON = 1 #10
-REWARD_GAME_LOST = -1 #-10
+REWARD_GAME_WON = 150
+REWARD_GAME_LOST = -150
 
-REWARD_ZERO_FIELD = 5
+REWARD_ZERO_FIELD = 0 
 REWARD_NUMBER_FIELD = 2
-REWARD_ALREADY_SHOWN_FIELD = -2  # -100
+REWARD_ALREADY_SHOWN_FIELD = -50
 
 # calculate actual input vector size
 BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
 
 # enable debug print
 DEBUG_PRINT = False
+
+def printParams():
+    print("Reward game WON:", REWARD_GAME_WON)
+    print("Reward game LOST:", REWARD_GAME_LOST)
+    print("Reward ZERO field:", REWARD_ZERO_FIELD)
+    print("Reward NUMBER field:", REWARD_NUMBER_FIELD)
+    print("Reward ALREADY SHOWN filed:", REWARD_ALREADY_SHOWN_FIELD)
+    print("====================================")
 
 class RMPlayer(object):
     def __init__(self):
@@ -126,8 +135,8 @@ class DQNLearner(object):
 class MineSweeper(object):
     BOMB = -1/100.0 
     EMPTY = 0
-    FLAGGED = 10/100.0
-    COVERED = 99/100.0
+    FLAGGED = 10 #not implemented
+    COVERED = -1 #change to -1, it was 99
     fieldsToPick = 0
     dimX = 0
     dimY = 0
@@ -251,7 +260,7 @@ class MineSweeper(object):
             return REWARD_GAME_LOST
         else:
             show = False
-            if self.visibleField[x][y] == self.COVERED: #99:
+            if self.visibleField[x][y] == self.COVERED:
                 show = True
             else:
                 return REWARD_ALREADY_SHOWN_FIELD
@@ -298,7 +307,7 @@ class MineSweeper(object):
         state = self.visibleField
 
         if DEBUG_PRINT:
-            print("game: {}".format(self.game))
+            print("game: {}".format(self.game))  #num of current game
     
         while True:
             # Determine hit/stay
@@ -320,17 +329,48 @@ class MineSweeper(object):
 
     def report(self):
         if self.game % self._num_learning_rounds == 0:
-            print(str(self.game) +" : "  +str(self.win / (self.win + self.loss)))
+            print("Learning ended")
+            print("After " + str(self.game) + " games : {0:.4}".format(self.win / (self.win + self.loss)))
+            printParams()
+            print("Test starts")
         elif self.game % self._report_every == 0:
-            print(str(self.win / (self.win + self.loss)))
+            print("After " + str(self.game) + " games : {0:.4}".format(self.win / (self.win + self.loss)))
 
-num_learning_rounds = 50000
-number_of_test_rounds = 1000
+num_learning_rounds = 10000    #50000
+number_of_test_rounds = 200    #1000
 
 game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100)
 #game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
 total = num_learning_rounds + number_of_test_rounds
+
+#write in file
+#orig_stdout = sys.stdout
+#f = open('results5x5x3-combinations-Jovana.txt', 'w')
+#sys.stdout = f
+
+#measure time
+start_time = datetime.now() 
+
+#REWARD_GAME_WON_values = [0, 50, 150, 300]
+#REWARD_GAME_LOST_values = [0, -50, -150, -300]
+
+#for i in range(0, len(REWARD_GAME_WON_values)):
+#    REWARD_GAME_WON = REWARD_GAME_WON_values[i]
+#    for j in range(0, len(REWARD_GAME_LOST_values)):
+#        REWARD_GAME_LOST = REWARD_GAME_LOST_values[j]
+#CURRENT_GAME = 0
+
+print("Learning starts")
 for k in range(0,total):
+    #CURRENT_GAME += 1
     game.run()
+print("Test ended")
+print("------------------------------------")
 
 #game.play()
+
+time_elapsed = datetime.now() - start_time 
+print('Time elapsed (hh:mm:ss.ms) {}'.format(time_elapsed))
+
+#sys.stdout = orig_stdout
+#f.close()

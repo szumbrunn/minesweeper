@@ -1,0 +1,53 @@
+CHANGING EPSILON DURING TIME
+Reward game WON: 300
+Reward game LOST: -300
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 10100 games : 0.1017
+After 10200 games : 0.1021
+Test ended
+------------------------------------
+Time elapsed (hh:mm:ss.ms) 0:12:15.891770
+
+EPSILON 0.1
+Reward game WON: 300
+Reward game LOST: -300
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 10100 games : 0.0802
+After 10200 games : 0.08029
+Test ended
+------------------------------------
+Time elapsed (hh:mm:ss.ms) 0:04:58.384807
+
+EPSILON 0.9
+Reward game WON: 300
+Reward game LOST: -300
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 10100 games : 0.2051
+After 10200 games : 0.2055
+Test ended
+------------------------------------
+Time elapsed (hh:mm:ss.ms) 0:10:51.216215
+
+Reward game WON: 300
+Reward game LOST: -300
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 51000 games : 0.2635
+Test ended
+------------------------------------
+Time elapsed (hh:mm:ss.ms) 0:40:38.962119
