@@ -1,0 +1,489 @@
+Learning starts
+After 1000 games : 0.059
+After 2000 games : 0.08
+After 3000 games : 0.09267
+After 4000 games : 0.1045
+After 5000 games : 0.11
+After 6000 games : 0.1122
+After 7000 games : 0.117
+After 8000 games : 0.1191
+After 9000 games : 0.123
+Learning ended
+After 10000 games : 0.1249
+Reward game WON: 0
+Reward game LOST: 0
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+Test ended
+------------------------------------
+Learning starts
+After 11000 games : 0.1269
+After 12000 games : 0.1293
+After 13000 games : 0.1337
+After 14000 games : 0.1421
+After 15000 games : 0.1455
+After 16000 games : 0.1499
+After 17000 games : 0.1549
+After 18000 games : 0.1597
+After 19000 games : 0.1643
+Learning ended
+After 20000 games : 0.1686
+Reward game WON: 0
+Reward game LOST: -50
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+Test ended
+------------------------------------
+Learning starts
+After 21000 games : 0.173
+After 22000 games : 0.1774
+After 23000 games : 0.1803
+After 24000 games : 0.1818
+After 25000 games : 0.1837
+After 26000 games : 0.186
+After 27000 games : 0.1877
+After 28000 games : 0.1904
+After 29000 games : 0.1918
+Learning ended
+After 30000 games : 0.194
+Reward game WON: 0
+Reward game LOST: -100
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+Test ended
+------------------------------------
+Learning starts
+After 31000 games : 0.1959
+After 32000 games : 0.1968
+After 33000 games : 0.1976
+After 34000 games : 0.1986
+After 35000 games : 0.1988
+After 36000 games : 0.1994
+After 37000 games : 0.2005
+After 38000 games : 0.2017
+After 39000 games : 0.2021
+Learning ended
+After 40000 games : 0.2023
+Reward game WON: 0
+Reward game LOST: -150
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+Test ended
+------------------------------------
+Learning starts
+After 41000 games : 0.2029
+After 42000 games : 0.2033
+After 43000 games : 0.2035
+After 44000 games : 0.2029
+After 45000 games : 0.2027
+After 46000 games : 0.2031
+After 47000 games : 0.2035
+After 48000 games : 0.204
+After 49000 games : 0.2042
+Learning ended
+After 50000 games : 0.2045
+Reward game WON: 0
+Reward game LOST: -300
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 51000 games : 0.2047
+Test ended
+------------------------------------
+Learning starts
+After 52000 games : 0.2051
+After 53000 games : 0.2052
+After 54000 games : 0.205
+After 55000 games : 0.2051
+After 56000 games : 0.2054
+After 57000 games : 0.2052
+After 58000 games : 0.205
+After 59000 games : 0.2048
+Learning ended
+After 60000 games : 0.2048
+Reward game WON: 50
+Reward game LOST: 0
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 61000 games : 0.2045
+Test ended
+------------------------------------
+Learning starts
+After 62000 games : 0.2043
+After 63000 games : 0.2042
+After 64000 games : 0.2047
+After 65000 games : 0.2054
+After 66000 games : 0.2064
+After 67000 games : 0.2071
+After 68000 games : 0.208
+After 69000 games : 0.2088
+Learning ended
+After 70000 games : 0.2096
+Reward game WON: 50
+Reward game LOST: -50
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 71000 games : 0.2104
+Test ended
+------------------------------------
+Learning starts
+After 72000 games : 0.2111
+After 73000 games : 0.2119
+After 74000 games : 0.2127
+After 75000 games : 0.2135
+After 76000 games : 0.2145
+After 77000 games : 0.2152
+After 78000 games : 0.2159
+After 79000 games : 0.2164
+Learning ended
+After 80000 games : 0.2169
+Reward game WON: 50
+Reward game LOST: -100
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 81000 games : 0.2175
+Learning starts
+After 1000 games : 0.068
+After 2000 games : 0.0825
+After 3000 games : 0.09067
+After 4000 games : 0.0925
+After 5000 games : 0.099
+After 6000 games : 0.09767
+After 7000 games : 0.09743
+After 8000 games : 0.1001
+After 9000 games : 0.1018
+Learning ended
+After 10000 games : 0.1053
+Reward game WON: 100
+Reward game LOST: 0
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+Test ended
+------------------------------------
+Learning starts
+After 11000 games : 0.1058
+After 12000 games : 0.1098
+After 13000 games : 0.1125
+After 14000 games : 0.1156
+After 15000 games : 0.1207
+After 16000 games : 0.1292
+After 17000 games : 0.1348
+After 18000 games : 0.1399
+After 19000 games : 0.1459
+Learning ended
+After 20000 games : 0.1502
+Reward game WON: 100
+Reward game LOST: -50
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+Test ended
+------------------------------------
+Learning starts
+After 21000 games : 0.1552
+After 22000 games : 0.1602
+After 23000 games : 0.1641
+After 24000 games : 0.169
+After 25000 games : 0.1744
+After 26000 games : 0.1787
+After 27000 games : 0.1825
+After 28000 games : 0.1861
+After 29000 games : 0.1891
+Learning ended
+After 30000 games : 0.1922
+Reward game WON: 100
+Reward game LOST: -100
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+Test ended
+------------------------------------
+Learning starts
+After 31000 games : 0.1951
+After 32000 games : 0.1979
+After 33000 games : 0.2001
+After 34000 games : 0.2022
+After 35000 games : 0.2036
+After 36000 games : 0.2052
+After 37000 games : 0.2065
+After 38000 games : 0.2077
+After 39000 games : 0.2087
+Learning ended
+After 40000 games : 0.2099
+Reward game WON: 100
+Reward game LOST: -150
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+Test ended
+------------------------------------
+Learning starts
+After 41000 games : 0.2108
+After 42000 games : 0.211
+After 43000 games : 0.2113
+After 44000 games : 0.2112
+After 45000 games : 0.2111
+After 46000 games : 0.2107
+After 47000 games : 0.2106
+After 48000 games : 0.2102
+After 49000 games : 0.2094
+Learning ended
+After 50000 games : 0.2093
+Reward game WON: 100
+Reward game LOST: -300
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 51000 games : 0.2087
+Test ended
+------------------------------------
+Learning starts
+After 52000 games : 0.2092
+After 53000 games : 0.2095
+After 54000 games : 0.2098
+After 55000 games : 0.2104
+After 56000 games : 0.2107
+After 57000 games : 0.2113
+After 58000 games : 0.2119
+After 59000 games : 0.2121
+Learning ended
+After 60000 games : 0.2124
+Reward game WON: 150
+Reward game LOST: 0
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 61000 games : 0.2126
+Test ended
+------------------------------------
+Learning starts
+After 62000 games : 0.213
+After 63000 games : 0.2134
+After 64000 games : 0.2141
+After 65000 games : 0.215
+After 66000 games : 0.2161
+After 67000 games : 0.2171
+After 68000 games : 0.2177
+After 69000 games : 0.2187
+Learning ended
+After 70000 games : 0.2197
+Reward game WON: 150
+Reward game LOST: -50
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 71000 games : 0.2205
+Test ended
+------------------------------------
+Learning starts
+After 72000 games : 0.2213
+After 73000 games : 0.2223
+After 74000 games : 0.2231
+After 75000 games : 0.2239
+After 76000 games : 0.225
+After 77000 games : 0.2256
+After 78000 games : 0.2262
+After 79000 games : 0.2274
+Learning ended
+After 80000 games : 0.2282
+Reward game WON: 150
+Reward game LOST: -100
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 81000 games : 0.2292
+Test ended
+------------------------------------
+Learning starts
+After 82000 games : 0.2299
+After 83000 games : 0.2309
+After 84000 games : 0.2318
+After 85000 games : 0.2325
+After 86000 games : 0.233
+After 87000 games : 0.2331
+After 88000 games : 0.2335
+After 89000 games : 0.2341
+Learning ended
+After 90000 games : 0.2341
+Reward game WON: 150
+Reward game LOST: -150
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 91000 games : 0.2341
+Test ended
+------------------------------------
+Learning starts
+After 92000 games : 0.2343
+After 93000 games : 0.2341
+After 94000 games : 0.2339
+After 95000 games : 0.2341
+After 96000 games : 0.2339
+After 97000 games : 0.2335
+After 98000 games : 0.2331
+After 99000 games : 0.2328
+Learning ended
+After 100000 games : 0.2327
+Reward game WON: 150
+Reward game LOST: -300
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 101000 games : 0.2325
+After 102000 games : 0.2324
+Test ended
+------------------------------------
+Learning starts
+After 103000 games : 0.2326
+After 104000 games : 0.2328
+After 105000 games : 0.2329
+After 106000 games : 0.2329
+After 107000 games : 0.2327
+After 108000 games : 0.2326
+After 109000 games : 0.2324
+Learning ended
+After 110000 games : 0.2327
+Reward game WON: 300
+Reward game LOST: 0
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 111000 games : 0.2326
+After 112000 games : 0.2327
+Test ended
+------------------------------------
+Learning starts
+After 113000 games : 0.2328
+After 114000 games : 0.2328
+After 115000 games : 0.2333
+After 116000 games : 0.2332
+After 117000 games : 0.2336
+After 118000 games : 0.2339
+After 119000 games : 0.2343
+Learning ended
+After 120000 games : 0.2348
+Reward game WON: 300
+Reward game LOST: -50
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 121000 games : 0.2351
+After 122000 games : 0.2356
+Test ended
+------------------------------------
+Learning starts
+After 123000 games : 0.2359
+After 124000 games : 0.2363
+After 125000 games : 0.2365
+After 126000 games : 0.2371
+After 127000 games : 0.2374
+After 128000 games : 0.2379
+After 129000 games : 0.2381
+Learning ended
+After 130000 games : 0.2384
+Reward game WON: 300
+Reward game LOST: -100
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+After 131000 games : 0.2387
+After 132000 games : 0.2393
+Test ended
+------------------------------------
+Learning starts
+After 1000 games : 0.109
+After 2000 games : 0.122
+After 3000 games : 0.1323
+After 4000 games : 0.1472
+After 5000 games : 0.162
+After 6000 games : 0.1718
+After 7000 games : 0.1847
+After 8000 games : 0.1939
+After 9000 games : 0.2031
+Learning ended
+After 10000 games : 0.2099
+Reward game WON: 300
+Reward game LOST: -150
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+Test starts
+Test ended
+------------------------------------
+Learning starts
+After 11000 games : 0.2179
+After 12000 games : 0.2243
+After 13000 games : 0.2305
+After 14000 games : 0.2329
+After 15000 games : 0.2341
+After 16000 games : 0.2381
+After 17000 games : 0.2425
+After 18000 games : 0.2448
+After 19000 games : 0.2488
+Reward game WON: 300
+Reward game LOST: -300
+Reward ZERO field: 0
+Reward NUMBER field: 2
+Reward ALREADY SHOWN filed: -50
+====================================
+
+After 10000 games : 0.1842
+Reward game WON: 150
+Reward game LOST: -150
+Reward ZERO field: 0
+Reward NUMBER field: 10
+Reward ALREADY SHOWN filed: -50
+====================================
+
+
