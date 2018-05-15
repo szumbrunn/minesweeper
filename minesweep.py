@@ -1,4 +1,4 @@
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers.core import Dense, Activation
 from keras.optimizers import RMSprop
 import numpy as np
@@ -11,7 +11,7 @@ from datetime import datetime
 BOARD_SIZE_X = 5
 BOARD_SIZE_Y = 5
 NUMBER_OF_BOMBS = 3
-FIRST_CHOICE_FREE = False
+FIRST_CHOICE_FREE = False ## make sure this is False! there's a bug somewhere otherwise
 
 # define individual rewards after each step/game
 REWARD_GAME_WON = 150
@@ -26,6 +26,11 @@ BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
 
 # enable debug print
 DEBUG_PRINT = False
+
+SAVE_MODEL = True
+FILE_INPUT = 'my_model.h5'
+LOAD_MODEL = True
+FILE_OUTPUT= 'my_model.h5'
 
 def printParams():
     print("Reward game WON:", REWARD_GAME_WON)
@@ -76,6 +81,10 @@ class DQNLearner(object):
 
         self._model = model
 
+        if LOAD_MODEL:
+            self.load_model()
+
+
     def get_action(self, state):
         state = state.flatten()
         rewards = self._model.predict([np.array([state])], batch_size=1)
@@ -114,6 +123,16 @@ class DQNLearner(object):
                             epochs=1, 
                             verbose=0)
 
+    def save_model(self):
+        print("Saving to: "+FILE_OUTPUT)
+        self._model.save(FILE_OUTPUT)  # creates a HDF5 file 'my_model.h5'
+
+    def load_model(self):
+        # returns a compiled model
+        # identical to the previous one
+        print("Loading from: "+FILE_INPUT)
+        self._model = load_model(FILE_INPUT)
+
 # Basic class for main sweeper game, currently supports inputs by command line
 class MineSweeper(object):
     BOMB = 9
@@ -128,11 +147,12 @@ class MineSweeper(object):
     loss = 0
     _first_move = True
     _report_every = 0
+    _save_every = 1000
     _num_learning_rounds = 0
     over = False
 
     # Creates two fields, one containing bombs and one that is hidden
-    def __init__(self, num_learn_rounds, dimX=3, dimY=3, bombs=1, learner=None, report_every=100):
+    def __init__(self, num_learn_rounds, dimX=3, dimY=3, bombs=1, learner=None, report_every=100, save_every=1000):
         self.dimX = dimX
         self.dimY = dimY
         self.bombs = bombs
@@ -140,6 +160,7 @@ class MineSweeper(object):
         self.loss = 0
         self.win = 0
         self._report_every = report_every
+        self._save_every = save_every
         self._num_learning_rounds = num_learn_rounds
 
         if self.p is None:
@@ -318,10 +339,14 @@ class MineSweeper(object):
         elif self.game % self._report_every == 0:
             print("After " + str(self.game) + " games : {0:.4}".format(self.win / (self.win + self.loss)))
 
-num_learning_rounds = 10000    #50000
+        if SAVE_MODEL and self.game % self._save_every == 0:
+            self.p.save_model()
+
+
+num_learning_rounds = 1000    #50000
 number_of_test_rounds = 200    #1000
 
-game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100)
+game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100, save_every=1000)
 #game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
 total = num_learning_rounds + number_of_test_rounds
 
