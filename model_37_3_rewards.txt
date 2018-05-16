@@ -1,0 +1,5 @@
+Reward game WON: 121
+Reward game LOST: -69
+Reward ZERO field: 16
+Reward NUMBER field: 0
+Reward ALREADY SHOWN filed: -81
