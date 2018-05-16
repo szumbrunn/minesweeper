@@ -1,5 +1,3 @@
-from keras import Input
-from keras.layers import Conv2D, Conv2DTranspose
 from keras.models import Sequential, load_model
 from keras.layers.core import Dense, Activation
 from keras.optimizers import RMSprop
@@ -8,6 +6,7 @@ import pandas as pd
 import sys
 import random
 from datetime import datetime 
+from pick_params import pick_params
 
 # define board size and number of bombs
 BOARD_SIZE_X = 5
@@ -16,12 +15,12 @@ NUMBER_OF_BOMBS = 3
 FIRST_CHOICE_FREE = False ## make sure this is False! there's a bug somewhere otherwise
 
 # define individual rewards after each step/game
-REWARD_GAME_WON = 10
-REWARD_GAME_LOST = -10
-
-REWARD_ZERO_FIELD = 0 
-REWARD_NUMBER_FIELD = 10
-REWARD_ALREADY_SHOWN_FIELD = -10
+dict_rewards=pick_params(sys.argv[1])
+REWARD_GAME_WON = dict_rewards["REWARD_GAME_WON"]
+REWARD_GAME_LOST = dict_rewards["REWARD_GAME_LOST"]
+REWARD_ZERO_FIELD = dict_rewards["REWARD_ZERO_FIELD"]
+REWARD_NUMBER_FIELD = dict_rewards["REWARD_NUMBER_FIELD"]
+REWARD_ALREADY_SHOWN_FIELD = dict_rewards["REWARD_ALREADY_SHOWN_FIELD"]
 
 # calculate actual input vector size
 BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
@@ -30,9 +29,9 @@ BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
 DEBUG_PRINT = False
 
 SAVE_MODEL = True
-FILE_INPUT = 'my_model.h5'
-LOAD_MODEL = True
-FILE_OUTPUT= 'my_model.h5'
+FILE_INPUT = sys.argv[2]
+LOAD_MODEL = False
+FILE_OUTPUT= sys.argv[2]
 
 def printParams():
     print("Reward game WON:", REWARD_GAME_WON)
@@ -61,39 +60,22 @@ class DQNLearner(object):
         self._learning = True
         self._learning_rate = .01
         self._discount = .2
-        self._epsilon = .9
-        self._last_action_x = None
-        self._last_action_y = None
+        self._epsilon = .9 #set to 0.1 and then change during iterations
+        self._last_action = None
         self._last_state = None
 
 
         # Create Model
         model = Sequential()
 
-        model.add(Conv2D(5, 3, strides=2, activation="relu", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y,1)))
+        model.add(Dense(100, kernel_initializer='lecun_uniform', input_shape=(BOARD_VECTOR_LENGTH,)))
+        model.add(Activation('relu'))
 
-        model.add(Conv2D(1, 2, strides=1, activation="relu"))
+        model.add(Dense(50, kernel_initializer='lecun_uniform'))
+        model.add(Activation('relu'))
 
-        model.add(Conv2DTranspose(1, 5, strides=1, activation="relu"))
-
-        model.add(Dense(1,activation="relu"))
-
-
-
-
-
-#        model.add(Conv2D(5,3,2, activation="relu", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
-
-
-
-#        model.add(Dense(100, kernel_initializer='lecun_uniform'))
-#        model.add(Activation('relu'))
-#
-#        model.add(Dense(50, kernel_initializer='lecun_uniform'))
-#        model.add(Activation('relu'))
-#
-#        model.add(Dense(BOARD_VECTOR_LENGTH, kernel_initializer='lecun_uniform'))
-#        model.add(Activation('linear'))
+        model.add(Dense(BOARD_VECTOR_LENGTH, kernel_initializer='lecun_uniform'))
+        model.add(Activation('linear'))
 
         rms = RMSprop()
         model.compile(loss='mse', optimizer=rms)
@@ -105,33 +87,35 @@ class DQNLearner(object):
 
 
     def get_action(self, state):
-        # state = state.flatten()
-        state = np.expand_dims(state, axis=2)
-        rewards = self._model.predict(np.expand_dims(state, axis=0), batch_size=1)
+        state = state.flatten()
+        rewards = self._model.predict([np.array([state])], batch_size=1)
+        
+        #change epsilon -> no improvement
+        """
+        CHANGE_EPSILON_AT = int(num_learning_rounds / 10)
+        if CURRENT_GAME % CHANGE_EPSILON_AT == 0:
+            if (self._epsilon < 0.9):
+                self._epsilon += 0.05
+                print("Epsilon:",self._epsilon)
+        """
         if np.random.uniform(0,1) < self._epsilon:
-            #action = np.argmax(rewards[0])
-            action_x = int(int(np.argmax(rewards[0])) / int(BOARD_SIZE_X))
-            action_y = int(np.argmax(rewards[0]) % BOARD_SIZE_Y)
-
+            action = np.argmax(rewards[0])
         else:
-            action_x = np.random.choice(list(range(0, BOARD_SIZE_X)))
-            action_y = np.random.choice(list(range(0, BOARD_SIZE_Y)))
-
+            action = np.random.choice(list(range(0,BOARD_VECTOR_LENGTH)))
+        
         self._last_target = rewards
         self._last_state = state
-        self._last_action_x = action_x
-        self._last_action_y = action_y
-        return action_x, action_y
+        self._last_action = action
+        return action
 
     def update(self,new_state,reward):
-#        new_state = new_state.flatten()
+        new_state = new_state.flatten()
         if self._learning:
-            new_state = np.expand_dims(new_state, axis=2)
-            rewards = self._model.predict(np.expand_dims(new_state, axis=0), batch_size=1)
+            rewards = self._model.predict([np.array([new_state])], batch_size=1)
             maxQ = np.max(rewards[0])
             new = self._discount * maxQ
             
-            self._last_target[0][self._last_action_x][self._last_action_y] = reward+new
+            self._last_target[0][self._last_action] = reward+new
     
             # Update model
             self._model.fit(np.array([self._last_state]), 
@@ -140,9 +124,14 @@ class DQNLearner(object):
                             epochs=1, 
                             verbose=0)
 
-    def save_model(self):
-        print("Saving to: "+FILE_OUTPUT)
-        self._model.save(FILE_OUTPUT)  # creates a HDF5 file 'my_model.h5'
+    def save_model(self, suffix=None):
+        if suffix is None:
+            print("Saving to: "+FILE_OUTPUT)
+            self._model.save(FILE_OUTPUT)  # creates a HDF5 file 'my_model.h5'
+        else:
+            suffix = '_' + suffix
+            print("Saving to: "+FILE_OUTPUT+suffix)
+            self._model.save(FILE_OUTPUT+suffix)  # creates a HDF5 file 'my_model.h5'
 
     def load_model(self):
         # returns a compiled model
@@ -152,7 +141,7 @@ class DQNLearner(object):
 
 # Basic class for main sweeper game, currently supports inputs by command line
 class MineSweeper(object):
-    BOMB = -1/100.0 
+    BOMB = 9
     EMPTY = 0
     FLAGGED = 10 #not implemented
     COVERED = -1 #change to -1, it was 99
@@ -220,7 +209,7 @@ class MineSweeper(object):
     
     def fieldValue(self, x,y):
         if self.hasBomb(x,y):
-            return self.BOMB
+            return 9
         count = 0
         for a in range(max(x-1,0), min(x+2,self.dimX)):
             for b in range(max(y-1,0),min(y+2,self.dimY)):
@@ -228,7 +217,7 @@ class MineSweeper(object):
         return count
 
     def hasBomb(self, x,y):
-        if self.field[x][y]==self.BOMB:
+        if self.field[x][y]==9:
             return True
         else:
             return False
@@ -253,7 +242,7 @@ class MineSweeper(object):
             for a in range(max(x-1,0), min(x+2,self.dimX)):
                 for b in range(max(y-1,0),min(y+2,self.dimY)):
                     #if a in range(0,self.dimX) and b in range(0,self.dimY) and a!=x and b!=y:
-                    if self.visibleField[a][b]==self.COVERED: #99:
+                    if self.visibleField[a][b]== self.COVERED:
                         if self.field[a][b]<9 and self.field[a][b]>0:
                             self.visibleField[a][b] = self.field[a][b]
                             self.fieldsToPick -= 1
@@ -269,6 +258,9 @@ class MineSweeper(object):
     def pickField(self, x, y):
         if DEBUG_PRINT:
             print("choice: {},{}".format(x,y))
+        if FIRST_CHOICE_FREE and self._first_move==True:
+            self.reset(x,y)
+            self._first_move = False
         if self.hasBomb(x,y):
             if DEBUG_PRINT:
                 print("You loose!")
@@ -277,9 +269,14 @@ class MineSweeper(object):
             self.loss += 1
             return REWARD_GAME_LOST
         else:
-            if self.visibleField[x][y] != self.COVERED:
+            show = False
+            if self.visibleField[x][y] == self.COVERED:
+                show = True
+            else:
                 return REWARD_ALREADY_SHOWN_FIELD
             self.updateVisibleField(x,y)
+            #if show and DEBUG_PRINT:
+            #    self.showVisibleField()
             if self.bombs==self.countUncovered():
                 if DEBUG_PRINT:
                     print("You win!")
@@ -291,7 +288,7 @@ class MineSweeper(object):
                 if self.field[x][y] == 0:
                     return REWARD_ZERO_FIELD
                 else:
-                    return REWARD_NUMBER_FIELD-self.field[x][y]
+                    return REWARD_NUMBER_FIELD
 
     def pickFieldByVector(self, v):
         v = np.reshape(v,(self.dimX,self.dimY))
@@ -324,11 +321,10 @@ class MineSweeper(object):
     
         while True:
             # Determine hit/stay
-            p1_action_x, p1_action_y = self.p.get_action(state)
-        
+            p1_action = self.p.get_action(state)
             # Apply the action if hit
-            v = np.zeros((BOARD_SIZE_X,BOARD_SIZE_Y))    #(BOARD_VECTOR_LENGTH)
-            v[p1_action_x][p1_action_y] = 1
+            v = np.zeros(BOARD_VECTOR_LENGTH)
+            v[p1_action] = 1
             reward = self.pickFieldByVector(v)
             self.p.update(self.visibleField,reward) # Update the learner with a reward of 0 (No change)
 
@@ -348,15 +344,15 @@ class MineSweeper(object):
             print("Test starts")
         elif self.game % self._report_every == 0:
             print("After " + str(self.game) + " games : {0:.4}".format(self.win / (self.win + self.loss)))
-
+        
         if SAVE_MODEL and self.game % self._save_every == 0:
-            self.p.save_model()
+            self.p.save_model(suffix=str(self.game)+'.h5')
 
 
-num_learning_rounds = 10000    #50000
-number_of_test_rounds = 200    #1000
+num_learning_rounds = 50000    #50000
+number_of_test_rounds = 1000    #1000
 
-game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100, save_every=10000)
+game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100, save_every=5000)
 #game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
 total = num_learning_rounds + number_of_test_rounds
 
