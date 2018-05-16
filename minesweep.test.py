@@ -18,7 +18,7 @@ game = MineSweeper(10, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=
 
 
 field = np.zeros((BOARD_SIZE_X,BOARD_SIZE_Y))
-field[3][3] = game.BOMB
-field[1][3] = game.BOMB
-field[2][2] = game.BOMB
+field[0][1] = game.BOMB
+field[1][2] = game.BOMB
+field[2][1] = game.BOMB
 game.test(field)
