@@ -17,7 +17,7 @@ FIRST_CHOICE_FREE = False ## make sure this is False! there's a bug somewhere ot
 REWARD_GAME_WON = 10
 REWARD_GAME_LOST = -10
 
-REWARD_ZERO_FIELD = 0 
+REWARD_ZERO_FIELD = 0
 REWARD_NUMBER_FIELD = 10
 REWARD_ALREADY_SHOWN_FIELD = -10
 
@@ -29,7 +29,7 @@ DEBUG_PRINT = False
 
 SAVE_MODEL = True
 FILE_INPUT = 'my_model.h5'
-LOAD_MODEL = True
+LOAD_MODEL = False 
 FILE_OUTPUT= 'my_model.h5'
 
 def printParams():
@@ -67,10 +67,10 @@ class DQNLearner(object):
         # Create Model
         model = Sequential()
 
-        model.add(Dense(100, kernel_initializer='lecun_uniform', input_shape=(BOARD_VECTOR_LENGTH,)))
+        model.add(Dense(104, kernel_initializer='lecun_uniform', input_shape=(BOARD_VECTOR_LENGTH+1,)))
         model.add(Activation('relu'))
 
-        model.add(Dense(50, kernel_initializer='lecun_uniform'))
+        model.add(Dense(52, kernel_initializer='lecun_uniform'))
         model.add(Activation('relu'))
 
         model.add(Dense(BOARD_VECTOR_LENGTH, kernel_initializer='lecun_uniform'))
@@ -92,7 +92,8 @@ class DQNLearner(object):
             action = np.argmax(rewards[0])
         else:
             action = np.random.choice(list(range(0,BOARD_VECTOR_LENGTH)))
-        
+
+        #print(self._epsilon)
         self._last_target = rewards
         self._last_state = state
         self._last_action = action
@@ -138,12 +139,13 @@ class MineSweeper(object):
     loss = 0
     _first_move = True
     _report_every = 0
-    _save_every = 1000
+    _save_every = 100000
     _num_learning_rounds = 0
     over = False
+    round = 0
 
     # Creates two fields, one containing bombs and one that is hidden
-    def __init__(self, num_learn_rounds, dimX=3, dimY=3, bombs=1, learner=None, report_every=100, save_every=1000):
+    def __init__(self, num_learn_rounds, dimX=3, dimY=3, bombs=1, learner=None, report_every=100, save_every=1000, debug=False):
         self.dimX = dimX
         self.dimY = dimY
         self.bombs = bombs
@@ -153,6 +155,7 @@ class MineSweeper(object):
         self._report_every = report_every
         self._save_every = save_every
         self._num_learning_rounds = num_learn_rounds
+        self._debug = debug
 
         if self.p is None:
             self.p = DQNLearner()
@@ -160,6 +163,10 @@ class MineSweeper(object):
         random.seed()
 
         self.reset()
+
+    def setField(self, field):
+        self.reset()
+        self.field = field
     
     def reset(self, choiceX=-1, choiceY=-1):
         random.seed()
@@ -185,12 +192,15 @@ class MineSweeper(object):
         #self.field[0][1] = self.BOMB
 
         # calc nearby bomb fields
+        self.calcBombFields()
+
+        if self._debug:
+            self.showVisibleField()
+    
+    def calcBombFields(self):
         for x in range(0,self.dimX):
             for y in range(0,self.dimY):
                 self.field[x][y] = self.fieldValue(x,y)
-
-        if DEBUG_PRINT:
-            self.showVisibleField()
     
     def fieldValue(self, x,y):
         if self.hasBomb(x,y):
@@ -241,10 +251,10 @@ class MineSweeper(object):
             return False
 
     def pickField(self, x, y):
-        if DEBUG_PRINT:
+        if self._debug:
             print("choice: {},{}".format(x,y))
         if self.hasBomb(x,y):
-            if DEBUG_PRINT:
+            if self._debug:
                 print("You loose!")
                 self.showField()
             self.over = True
@@ -255,7 +265,7 @@ class MineSweeper(object):
                 return REWARD_ALREADY_SHOWN_FIELD
             self.updateVisibleField(x,y)
             if self.bombs==self.countUncovered():
-                if DEBUG_PRINT:
+                if self._debug:
                     print("You win!")
                     self.showField()
                 self.over = True
@@ -284,16 +294,47 @@ class MineSweeper(object):
         return dict(zip(unique, counts))[self.COVERED]
 
     def play(self):
-        while game.isRunning():
+        while self.isRunning():
             x = int(input("Enter a number for x: "))
             y = int(input("Enter a number for y: "))
-            game.pickField(x,y)
+            self.pickField(x,y)
     
     def run(self):
         self.reset()
         state = self.visibleField
+        state = np.append(state,self.round)
+        if self._debug:
+            print("game: {}".format(self.game))  #num of current game
+        self.round = 0
+        while True:
+            # Determine hit/stay
+            state[len(state)-1] = self.round
+            p1_action = self.p.get_action(state)
+            # Apply the action if hit
+            v = np.zeros(BOARD_VECTOR_LENGTH)
+            v[p1_action] = 1
+            reward = self.pickFieldByVector(v)
+            new_state = np.array(self.visibleField)
+            new_state = np.append(new_state,[self.round])
+            self.p.update(new_state,reward) # Update the learner with a reward of 0 (No change)
+            
+            self.round += 1
+            # If game is over
+            if not self.isRunning():
+                break
 
-        if DEBUG_PRINT:
+        self.game += 1
+
+        self.report()
+    
+    def test(self, field):
+        self.setField(field)
+        self.calcBombFields()
+        if self._debug:
+            print(self.field)
+        state = self.visibleField
+
+        if self._debug:
             print("game: {}".format(self.game))  #num of current game
     
         while True:
@@ -303,13 +344,11 @@ class MineSweeper(object):
             v = np.zeros(BOARD_VECTOR_LENGTH)
             v[p1_action] = 1
             reward = self.pickFieldByVector(v)
-            self.p.update(self.visibleField,reward) # Update the learner with a reward of 0 (No change)
-
+            #self.p.update(self.visibleField,reward) # Update the learner with a reward of 0 (No change)
+            print(self.visibleField)
             # If game is over
             if not self.isRunning():
                 break
-
-        self.game += 1
 
         self.report()
 
@@ -324,43 +363,3 @@ class MineSweeper(object):
 
         if SAVE_MODEL and self.game % self._save_every == 0:
             self.p.save_model()
-
-
-num_learning_rounds = 10000    #50000
-number_of_test_rounds = 200    #1000
-
-game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100, save_every=10000)
-#game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
-total = num_learning_rounds + number_of_test_rounds
-
-#write in file
-#orig_stdout = sys.stdout
-#f = open('results5x5x3-combinations-Jovana.txt', 'w')
-#sys.stdout = f
-
-#measure time
-start_time = datetime.now() 
-
-#REWARD_GAME_WON_values = [0, 50, 150, 300]
-#REWARD_GAME_LOST_values = [0, -50, -150, -300]
-
-#for i in range(0, len(REWARD_GAME_WON_values)):
-#    REWARD_GAME_WON = REWARD_GAME_WON_values[i]
-#    for j in range(0, len(REWARD_GAME_LOST_values)):
-#        REWARD_GAME_LOST = REWARD_GAME_LOST_values[j]
-#CURRENT_GAME = 0
-
-print("Learning starts")
-for k in range(0,total):
-    #CURRENT_GAME += 1
-    game.run()
-print("Test ended")
-print("------------------------------------")
-
-#game.play()
-
-time_elapsed = datetime.now() - start_time 
-print('Time elapsed (hh:mm:ss.ms) {}'.format(time_elapsed))
-
-#sys.stdout = orig_stdout
-#f.close()
