@@ -29,9 +29,9 @@ BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
 # enable debug print
 DEBUG_PRINT = False
 
-SAVE_MODEL = True
+SAVE_MODEL = False #True
 FILE_INPUT = 'my_model.h5'
-LOAD_MODEL = True
+LOAD_MODEL = False #True
 FILE_OUTPUT= 'my_model.h5'
 
 def printParams():
@@ -108,6 +108,7 @@ class DQNLearner(object):
         # state = state.flatten()
         state = np.expand_dims(state, axis=2)
         rewards = self._model.predict(np.expand_dims(state, axis=0), batch_size=1)
+        print(rewards[0])
         if np.random.uniform(0,1) < self._epsilon:
             #action = np.argmax(rewards[0])
             action_x = int(int(np.argmax(rewards[0])) / int(BOARD_SIZE_X))
