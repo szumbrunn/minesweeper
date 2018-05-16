@@ -6,10 +6,10 @@ BOARD_SIZE_X = 5
 BOARD_SIZE_Y = 5
 NUMBER_OF_BOMBS = 3
 
-num_learning_rounds = 10000    #50000
+num_learning_rounds = 20000    #50000
 number_of_test_rounds = 200    #1000
 
-game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100, save_every=10000)
+game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100, save_every=10000, debug=False)
 #game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
 total = num_learning_rounds + number_of_test_rounds
 

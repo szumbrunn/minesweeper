@@ -19,7 +19,6 @@ REWARD_GAME_LOST = -10
 
 REWARD_ZERO_FIELD = 0
 REWARD_NUMBER_FIELD = 10
-REWARD_ALREADY_SHOWN_FIELD = -10
 
 # calculate actual input vector size
 BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
@@ -29,7 +28,7 @@ DEBUG_PRINT = False
 
 SAVE_MODEL = True
 FILE_INPUT = 'my_model.h5'
-LOAD_MODEL = False 
+LOAD_MODEL = True 
 FILE_OUTPUT= 'my_model.h5'
 
 def printParams():
@@ -37,7 +36,6 @@ def printParams():
     print("Reward game LOST:", REWARD_GAME_LOST)
     print("Reward ZERO field:", REWARD_ZERO_FIELD)
     print("Reward NUMBER field:", REWARD_NUMBER_FIELD)
-    print("Reward ALREADY SHOWN filed:", REWARD_ALREADY_SHOWN_FIELD)
     print("====================================")
 
 class RMPlayer(object):
@@ -67,10 +65,10 @@ class DQNLearner(object):
         # Create Model
         model = Sequential()
 
-        model.add(Dense(104, kernel_initializer='lecun_uniform', input_shape=(BOARD_VECTOR_LENGTH+1,)))
+        model.add(Dense(100, kernel_initializer='lecun_uniform', input_shape=(BOARD_VECTOR_LENGTH,)))
         model.add(Activation('relu'))
 
-        model.add(Dense(52, kernel_initializer='lecun_uniform'))
+        model.add(Dense(50, kernel_initializer='lecun_uniform'))
         model.add(Activation('relu'))
 
         model.add(Dense(BOARD_VECTOR_LENGTH, kernel_initializer='lecun_uniform'))
@@ -88,29 +86,26 @@ class DQNLearner(object):
     def get_action(self, state):
         state = state.flatten()
         rewards = self._model.predict([np.array([state])], batch_size=1)
-        if np.random.uniform(0,1) < self._epsilon:
-            action = np.argmax(rewards[0])
-        else:
-            action = np.random.choice(list(range(0,BOARD_VECTOR_LENGTH)))
+        #if np.random.uniform(0,1) < self._epsilon:
+        #    action = rewards[0]
+        #else:
+        #    action = np.random.choice(list(range(0,BOARD_VECTOR_LENGTH)))
 
         #print(self._epsilon)
-        self._last_target = rewards
+        #self._last_target = rewards
         self._last_state = state
-        self._last_action = action
-        return action
+        return rewards[0]
 
-    def update(self,new_state,reward):
+    def update(self,new_state,rewards):
         new_state = new_state.flatten()
         if self._learning:
             rewards = self._model.predict([np.array([new_state])], batch_size=1)
             maxQ = np.max(rewards[0])
             new = self._discount * maxQ
-            
-            self._last_target[0][self._last_action] = reward+new
     
             # Update model
             self._model.fit(np.array([self._last_state]), 
-                            self._last_target, 
+                            rewards, 
                             batch_size=1, 
                             epochs=1, 
                             verbose=0)
@@ -261,8 +256,6 @@ class MineSweeper(object):
             self.loss += 1
             return REWARD_GAME_LOST
         else:
-            if self.visibleField[x][y] != self.COVERED:
-                return REWARD_ALREADY_SHOWN_FIELD
             self.updateVisibleField(x,y)
             if self.bombs==self.countUncovered():
                 if self._debug:
@@ -298,31 +291,40 @@ class MineSweeper(object):
             x = int(input("Enter a number for x: "))
             y = int(input("Enter a number for y: "))
             self.pickField(x,y)
+
+    def removeInvalidActions(self, actions):
+        actions = np.reshape(actions,(self.dimX,self.dimY))
+        for x in range(0,self.dimX):
+            for y in range(0,self.dimY):
+                if self.visibleField[x][y] != self.COVERED:
+                    actions[x][y] = -10e10
+        return actions
     
     def run(self):
         self.reset()
-        state = self.visibleField
-        state = np.append(state,self.round)
         if self._debug:
             print("game: {}".format(self.game))  #num of current game
-        self.round = 0
         while True:
+            state = self.visibleField
             # Determine hit/stay
-            state[len(state)-1] = self.round
-            p1_action = self.p.get_action(state)
-            # Apply the action if hit
-            v = np.zeros(BOARD_VECTOR_LENGTH)
-            v[p1_action] = 1
+            rewards = self.p.get_action(state)
+            actions = self.removeInvalidActions(rewards)
+            #print(actions)
+            v = np.zeros(BOARD_VECTOR_LENGTH) 
+            if np.random.random() > self.p._epsilon:
+                lastaction = np.random.choice(np.where(actions > -10e10)[0])
+            else:    
+                lastaction = np.argmax(actions)
+            v[lastaction] = 1
             reward = self.pickFieldByVector(v)
-            new_state = np.array(self.visibleField)
-            new_state = np.append(new_state,[self.round])
-            self.p.update(new_state,reward) # Update the learner with a reward of 0 (No change)
-            
-            self.round += 1
+            rewards[lastaction] += reward 
+            self.p.update(state,rewards) # Update the learner with a reward of 0 (No change)
             # If game is over
             if not self.isRunning():
                 break
 
+        if self.countUncovered() == self.bombs:
+            print(self.showField())
         self.game += 1
 
         self.report()
@@ -339,10 +341,13 @@ class MineSweeper(object):
     
         while True:
             # Determine hit/stay
-            p1_action = self.p.get_action(state)
+            actions = self.p.get_action(state)
             # Apply the action if hit
-            v = np.zeros(BOARD_VECTOR_LENGTH)
-            v[p1_action] = 1
+            actions = self.removeInvalidActions(actions)
+            #print(actions)
+            v = np.zeros(BOARD_VECTOR_LENGTH) 
+            lastaction = np.argmax(actions)
+            v[lastaction] = 1
             reward = self.pickFieldByVector(v)
             #self.p.update(self.visibleField,reward) # Update the learner with a reward of 0 (No change)
             print(self.visibleField)
