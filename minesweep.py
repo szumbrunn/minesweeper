@@ -1,5 +1,5 @@
-from keras import Input
-from keras.layers import Conv2D, Conv2DTranspose
+from keras import Input, Model
+from keras.layers import Conv2D, Conv2DTranspose, Multiply
 from keras.models import Sequential, load_model
 from keras.layers.core import Dense, Activation
 from keras.optimizers import RMSprop
@@ -19,7 +19,7 @@ FIRST_CHOICE_FREE = False ## make sure this is False! there's a bug somewhere ot
 REWARD_GAME_WON = 10
 REWARD_GAME_LOST = -10
 
-REWARD_ZERO_FIELD = 0 
+REWARD_ZERO_FIELD = 0
 REWARD_NUMBER_FIELD = 10
 REWARD_ALREADY_SHOWN_FIELD = -10
 
@@ -60,7 +60,7 @@ class DQNLearner(object):
         self._last_target = None
         self._learning = True
         self._learning_rate = .01
-        self._discount = .2
+        self._discount = .02
         self._epsilon = .9
         self._last_action_x = None
         self._last_action_y = None
@@ -70,13 +70,16 @@ class DQNLearner(object):
         # Create Model
         model = Sequential()
 
-        model.add(Conv2D(5, 3, strides=2, activation="relu", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y,1)))
 
-        model.add(Conv2D(1, 2, strides=1, activation="relu"))
 
-        model.add(Conv2DTranspose(1, 5, strides=1, activation="relu"))
+        model.add(Conv2D(64, 3, strides=1, activation="tanh", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
 
-        model.add(Dense(1,activation="relu"))
+        model.add(Conv2D(64, 3, strides=1, activation="tanh"))
+     #   model.add(Conv2D(64, 3, strides=1, activation="relu"))
+
+        model.add(Conv2DTranspose(1, 5, strides=1, activation="tanh"))
+
+        model.add(Dense(1, activation="linear"))
 
 
 
@@ -100,6 +103,8 @@ class DQNLearner(object):
 
         self._model = model
 
+
+
         if LOAD_MODEL:
             self.load_model()
 
@@ -107,19 +112,24 @@ class DQNLearner(object):
     def get_action(self, state):
         # state = state.flatten()
         state = np.expand_dims(state, axis=2)
+        #state = np.expand_dims(state, axis=0)
+        #state = state.reshape(1,5,5)
         rewards = self._model.predict(np.expand_dims(state, axis=0), batch_size=1)
-        print(rewards[0])
+        rewards = rewards #.flatten() #.reshape(5,5)
+        if DEBUG_PRINT:
+            #print(rewards)
+            pass
         if np.random.uniform(0,1) < self._epsilon:
             #action = np.argmax(rewards[0])
-            action_x = int(int(np.argmax(rewards[0])) / int(BOARD_SIZE_X))
-            action_y = int(np.argmax(rewards[0]) % BOARD_SIZE_Y)
+            action_x = int(int(np.argmax(rewards)) / int(BOARD_SIZE_X))
+            action_y = int(np.argmax(rewards) % BOARD_SIZE_Y)
 
         else:
             action_x = np.random.choice(list(range(0, BOARD_SIZE_X)))
             action_y = np.random.choice(list(range(0, BOARD_SIZE_Y)))
 
         self._last_target = rewards
-        self._last_state = state
+        self._last_state = state #.reshape(1,5,5,1)
         self._last_action_x = action_x
         self._last_action_y = action_y
         return action_x, action_y
@@ -129,14 +139,15 @@ class DQNLearner(object):
         if self._learning:
             new_state = np.expand_dims(new_state, axis=2)
             rewards = self._model.predict(np.expand_dims(new_state, axis=0), batch_size=1)
-            maxQ = np.max(rewards[0])
+            maxQ = np.max(rewards) #[0]
             new = self._discount * maxQ
-            
+#            print(self._last_target[0][self._last_action_x][self._last_action_y])
             self._last_target[0][self._last_action_x][self._last_action_y] = reward+new
     
             # Update model
-            self._model.fit(np.array([self._last_state]), 
-                            self._last_target, 
+            self._model.fit(#np.array([self._last_state]),
+                            self._last_state.reshape(1,5,5,1),
+                            self._last_target.reshape(1,5,5,1),
                             batch_size=1, 
                             epochs=1, 
                             verbose=0)
@@ -153,7 +164,7 @@ class DQNLearner(object):
 
 # Basic class for main sweeper game, currently supports inputs by command line
 class MineSweeper(object):
-    BOMB = -1/100.0 
+    BOMB = 9 
     EMPTY = 0
     FLAGGED = 10 #not implemented
     COVERED = -1 #change to -1, it was 99
@@ -294,16 +305,16 @@ class MineSweeper(object):
                 else:
                     return REWARD_NUMBER_FIELD-self.field[x][y]
 
-    def pickFieldByVector(self, v):
-        v = np.reshape(v,(self.dimX,self.dimY))
-        coodX = -1
-        coodY = -1
-        for x in range(0,self.dimX):
-            for y in range(0,self.dimY):
-                if v[x][y] == 1:
-                    coodX = x
-                    coodY = y
-        return self.pickField(coodX,coodY)
+#    def pickFieldByVector(self, v):
+#        v = np.reshape(v,(self.dimX,self.dimY))
+#        coodX = -1
+#        coodY = -1
+#        for x in range(0,self.dimX):
+#            for y in range(0,self.dimY):
+#                if v[x][y] == 1:
+#                    coodX = x
+#                    coodY = y
+#        return self.pickField(coodX,coodY)
 
 
     def countUncovered(self):
@@ -319,6 +330,7 @@ class MineSweeper(object):
     def run(self):
         self.reset()
         state = self.visibleField
+        #print(self.visibleField)
 
         if DEBUG_PRINT:
             print("game: {}".format(self.game))  #num of current game
@@ -328,10 +340,12 @@ class MineSweeper(object):
             p1_action_x, p1_action_y = self.p.get_action(state)
         
             # Apply the action if hit
-            v = np.zeros((BOARD_SIZE_X,BOARD_SIZE_Y))    #(BOARD_VECTOR_LENGTH)
-            v[p1_action_x][p1_action_y] = 1
-            reward = self.pickFieldByVector(v)
-            self.p.update(self.visibleField,reward) # Update the learner with a reward of 0 (No change)
+#            v = np.zeros((BOARD_SIZE_X,BOARD_SIZE_Y))    #(BOARD_VECTOR_LENGTH)
+#            v[p1_action_x][p1_action_y] = 1
+            reward = self.pickField(p1_action_x, p1_action_y)
+            self.p.update(self.visibleField, reward) # Update the learner with a reward of 0 (No change)
+
+           # self.showVisibleField()
 
             # If game is over
             if not self.isRunning():

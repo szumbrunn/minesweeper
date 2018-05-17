@@ -13,7 +13,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/minesweeper$minesweep.coverage" NAME="minesweep Coverage Results" MODIFIED="1525087614969" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/minesweeper$minesweep.coverage" NAME="minesweep Coverage Results" MODIFIED="1526570121102" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FavoritesManager">
     <favorites_list name="minesweeper" />
@@ -23,11 +23,20 @@
       <file leaf-file-name="minesweep.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/minesweep.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="379">
-              <caret line="329" column="99" selection-start-line="329" selection-start-column="99" selection-end-line="329" selection-end-column="99" />
+            <state relative-caret-position="300">
+              <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
               <folding>
-                <element signature="e#0#23#0" expanded="true" />
+                <element signature="e#0#30#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pydevd.py" pinned="false" current-in-tab="false">
+        <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="410">
+              <caret line="1657" selection-start-line="1657" selection-end-line="1657" />
             </state>
           </provider>
         </entry>
@@ -80,8 +89,8 @@
       <file leaf-file-name="training.py" pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/keras/engine/training.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="975">
-              <caret line="85" selection-start-line="85" selection-end-line="85" />
+            <state relative-caret-position="26400">
+              <caret line="1780" column="8" selection-start-line="1780" selection-start-column="8" selection-end-line="1780" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -103,6 +112,12 @@
       <find>run</find>
       <find>predict</find>
       <find>print</find>
+      <find>rewards =</find>
+      <find>rw</find>
+      <find>rewards</find>
+      <find>state</find>
+      <find>visible</find>
+      <find>DEBUG</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -122,20 +137,33 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="262" />
-    <option name="y" value="-4" />
-    <option name="width" value="1412" />
-    <option name="height" value="1048" />
+    <option name="y" value="24" />
+    <option name="width" value="960" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="minesweeper" type="b2602c69:ProjectViewProjectNode" />
+              <item name="minesweeper" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$USER_HOME$/minesweeper_fully/minesweeper" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -150,18 +178,18 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="minesweep" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="minesweep" type="PythonConfigurationType" factoryName="Python" singleton="true" temporary="true">
+      <module name="minesweeper" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="$PROJECT_DIR$/../.conda/envs/fastai/bin/python3.6" />
+      <option name="SDK_HOME" value="$USER_HOME$/.conda/envs/fastai/bin/python3.6" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/minesweep.py" />
       <option name="PARAMETERS" value="" />
@@ -350,22 +378,23 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="-11" width="1922" height="1092" extended-state="6" />
+    <frame x="0" y="-4" width="1920" height="1084" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.26927084" side_tool="true" visible="true" weight="0.3760246" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.27447918" side_tool="true" visible="true" weight="0.335041" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.73072916" weight="0.3760246" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.72552085" visible="true" weight="0.335041" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4958949" weight="0.36770833" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.48844376" visible="true" weight="0.1828125" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
-      <window_info active="true" anchor="right" id="SciView" order="3" visible="true" weight="0.20729166" />
+      <window_info anchor="right" id="SciView" order="3" visible="true" weight="0.240625" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" sideWeight="0.5041051" side_tool="true" visible="true" weight="0.13697916" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.79375" weight="0.33811477" />
+      <window_info id="Favorites" order="2" sideWeight="0.51155627" side_tool="true" visible="true" weight="0.1828125" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.790625" weight="0.33811477" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -382,13 +411,166 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/minesweep.py</url>
+          <line>144</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/minesweep.py</url>
+          <line>140</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/minesweep.py</url>
+          <line>123</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="5" />
+    </breakpoint-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>rewards[0][self._last_action_x][self._last_action_y]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>rewards[0]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>rewards</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self._last_action_x</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self._last_action_y</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self._last_target</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self._last_state.reshape(1,5,5,1)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self._last_state.shape</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
   <component name="editorHistoryManager">
+    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/keras/legacy/interfaces.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4050">
+          <caret line="277" selection-start-line="277" selection-end-line="277" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/keras/engine/training.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1380">
+          <caret line="112" selection-start-line="112" selection-end-line="112" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/tensorflow/python/framework/common_shapes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10365">
+          <caret line="703" column="27" selection-start-line="703" selection-start-column="27" selection-end-line="703" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/minesweep.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4935">
+          <caret line="329" lean-forward="true" selection-start-line="329" selection-end-line="329" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/tensorflow/python/eager/execute.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1980">
+          <caret line="145" selection-start-line="145" selection-end-line="145" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/codecs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4620">
+          <caret line="308" selection-start-line="308" selection-end-line="308" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/keras/engine/topology.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4080">
+          <caret line="292" selection-start-line="292" selection-end-line="292" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/keras/legacy/interfaces.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4050">
+          <caret line="277" selection-start-line="277" selection-end-line="277" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/keras/engine/training.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="975">
+          <caret line="85" selection-start-line="85" selection-end-line="85" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/tensorflow/python/framework/common_shapes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10365">
+          <caret line="703" column="27" selection-start-line="703" selection-start-column="27" selection-end-line="703" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/minesweep.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4935">
           <caret line="329" column="99" selection-start-line="329" selection-start-column="99" selection-end-line="329" selection-end-column="99" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#0#30#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -447,7 +629,7 @@
         <state relative-caret-position="4815">
           <caret line="329" column="100" selection-start-line="329" selection-start-column="100" selection-end-line="329" selection-end-column="100" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#0#30#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -506,7 +688,7 @@
         <state relative-caret-position="165">
           <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#0#30#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -565,7 +747,7 @@
         <state relative-caret-position="975">
           <caret line="71" column="60" lean-forward="true" selection-start-line="71" selection-start-column="60" selection-end-line="71" selection-end-column="60" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#0#30#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -595,13 +777,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="17" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/keras/engine/training.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="975">
-          <caret line="85" selection-start-line="85" selection-end-line="85" />
         </state>
       </provider>
     </entry>
@@ -643,16 +818,37 @@
     <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/keras/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="293">
-          <caret line="853" lean-forward="true" selection-start-line="852" selection-start-column="27" selection-end-line="853" />
+          <caret line="1044" column="8" selection-start-line="1044" selection-start-column="8" selection-end-line="1044" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="410">
+          <caret line="1657" selection-start-line="1657" selection-end-line="1657" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/keras/engine/training.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="26400">
+          <caret line="1780" column="8" selection-start-line="1780" selection-start-column="8" selection-end-line="1780" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.conda/envs/fastai/lib/python3.6/site-packages/tensorflow/python/framework/ops.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="2398" selection-start-line="2398" selection-end-line="2398" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/minesweep.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="379">
-          <caret line="329" column="99" selection-start-line="329" selection-start-column="99" selection-end-line="329" selection-end-column="99" />
+        <state relative-caret-position="300">
+          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#0#30#0" expanded="true" />
           </folding>
         </state>
       </provider>
