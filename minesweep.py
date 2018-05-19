@@ -1,8 +1,9 @@
 from keras import Input, Model
-from keras.layers import Conv2D, Conv2DTranspose, Multiply
+from keras.layers import Conv2D, Conv2DTranspose, MaxPool2D, MaxPooling2D, UpSampling2D
 from keras.models import Sequential, load_model
 from keras.layers.core import Dense, Activation
 from keras.optimizers import RMSprop
+from keras.utils.vis_utils import plot_model
 import numpy as np
 import pandas as pd
 import sys
@@ -12,7 +13,7 @@ from datetime import datetime
 # define board size and number of bombs
 BOARD_SIZE_X = 5
 BOARD_SIZE_Y = 5
-NUMBER_OF_BOMBS = 3
+NUMBER_OF_BOMBS = 5
 FIRST_CHOICE_FREE = False ## make sure this is False! there's a bug somewhere otherwise
 
 # define individual rewards after each step/game
@@ -60,8 +61,8 @@ class DQNLearner(object):
         self._last_target = None
         self._learning = True
         self._learning_rate = .01
-        self._discount = .02
-        self._epsilon = .9
+        self._discount = .2
+        self._epsilon = .05
         self._last_action_x = None
         self._last_action_y = None
         self._last_state = None
@@ -72,18 +73,25 @@ class DQNLearner(object):
 
 
 
-        model.add(Conv2D(64, 3, strides=1, activation="tanh", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
+        model.add(Conv2D(64, 3, padding='SAME', strides=1, activation="tanh", kernel_initializer="lecun_uniform", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
 
+
+        model.add(Conv2D(64, 3, strides=1, activation="tanh", kernel_initializer="lecun_uniform"))
         model.add(Conv2D(64, 3, strides=1, activation="tanh"))
-     #   model.add(Conv2D(64, 3, strides=1, activation="relu"))
-
-        model.add(Conv2DTranspose(1, 5, strides=1, activation="tanh"))
-
-        model.add(Dense(1, activation="linear"))
 
 
+        model.add(Conv2DTranspose(1, 5, strides=1, activation="sigmoid"))
+    #    model.add(UpSampling2D(size=(3, 3)))
+        #    model.add(MaxPooling2D(pool_size=(3,3), strides=None, padding='valid'))
+    #    model.add(Conv2DTranspose(1,5, strides=1, activation="tanh"))
+        model.add(Dense(100, activation='tanh', kernel_initializer="lecun_uniform"))
+        model.add(Dense(50, activation='tanh', kernel_initializer="lecun_uniform"))
+        model.add(Dense(1, activation='linear', kernel_initializer="lecun_uniform"))
 
 
+
+
+        plot_model(model, to_file="model_conv.png", show_shapes=True, show_layer_names=True)
 
 #        model.add(Conv2D(5,3,2, activation="relu", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
 
@@ -368,7 +376,7 @@ class MineSweeper(object):
             self.p.save_model()
 
 
-num_learning_rounds = 10000    #50000
+num_learning_rounds = 1000000    #50000
 number_of_test_rounds = 200    #1000
 
 game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS,report_every=100, save_every=10000)
