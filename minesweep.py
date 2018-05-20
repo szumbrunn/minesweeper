@@ -13,16 +13,16 @@ from datetime import datetime
 # define board size and number of bombs
 BOARD_SIZE_X = 5
 BOARD_SIZE_Y = 5
-NUMBER_OF_BOMBS = 5
+NUMBER_OF_BOMBS = 3
 FIRST_CHOICE_FREE = False ## make sure this is False! there's a bug somewhere otherwise
 
 # define individual rewards after each step/game
-REWARD_GAME_WON = 10
-REWARD_GAME_LOST = -10
+REWARD_GAME_WON = 121
+REWARD_GAME_LOST = -69
 
-REWARD_ZERO_FIELD = 0
-REWARD_NUMBER_FIELD = 10
-REWARD_ALREADY_SHOWN_FIELD = -10
+REWARD_ZERO_FIELD = 16
+REWARD_NUMBER_FIELD = 0
+REWARD_ALREADY_SHOWN_FIELD = -81
 
 # calculate actual input vector size
 BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
@@ -91,7 +91,7 @@ class DQNLearner(object):
 
 
 
-        plot_model(model, to_file="model_conv.png", show_shapes=True, show_layer_names=True)
+#        plot_model(model, to_file="model_conv.png", show_shapes=True, show_layer_names=True)
 
 #        model.add(Conv2D(5,3,2, activation="relu", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
 
