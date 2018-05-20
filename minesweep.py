@@ -14,12 +14,14 @@ NUMBER_OF_BOMBS = 3
 FIRST_CHOICE_FREE = False ## make sure this is False! there's a bug somewhere otherwise
 
 # define individual rewards after each step/game
-REWARD_GAME_WON = 10
-REWARD_GAME_LOST = -10
+REWARD_GAME_WON = 121
+REWARD_GAME_LOST = -69
 
-REWARD_ZERO_FIELD = 0 
+REWARD_ZERO_FIELD = 16 
 REWARD_NUMBER_FIELD = 10
-REWARD_ALREADY_SHOWN_FIELD = -10
+REWARD_ALREADY_SHOWN_FIELD = -81
+
+random.seed(7) # for reproducibility
 
 # calculate actual input vector size
 BOARD_VECTOR_LENGTH = BOARD_SIZE_X*BOARD_SIZE_Y
@@ -40,6 +42,7 @@ def printParams():
     print("Reward ALREADY SHOWN filed:", REWARD_ALREADY_SHOWN_FIELD)
     print("====================================")
 
+# random player, chooses action randomly
 class RMPlayer(object):
     def __init__(self):
         super().__init__()
@@ -52,6 +55,7 @@ class RMPlayer(object):
         #do nothing
         i = 0
 
+# dqn player, learns from playing
 class DQNLearner(object):
     def __init__(self):
         super().__init__()
@@ -62,7 +66,6 @@ class DQNLearner(object):
         self._epsilon = .9 #set to 0.1 and then change during iterations
         self._last_action = None
         self._last_state = None
-
 
         # Create Model
         model = Sequential()
@@ -81,10 +84,11 @@ class DQNLearner(object):
 
         self._model = model
 
+        # load model if wanted
         if LOAD_MODEL:
             self.load_model()
 
-
+    # uses the maximum from Q to choose the action, epsilon adds exploring
     def get_action(self, state):
         state = state.flatten()
         rewards = self._model.predict([np.array([state])], batch_size=1)
@@ -98,6 +102,7 @@ class DQNLearner(object):
         self._last_action = action
         return action
 
+    # fits the previous state to the reward
     def update(self,new_state,reward):
         new_state = new_state.flatten()
         if self._learning:
@@ -216,6 +221,7 @@ class MineSweeper(object):
     def updateVisibleField(self, x, y):
         self.showFieldsRecursively(x,y)
     
+    # recursively uncovers fields until numbers are found
     def showFieldsRecursively(self,x,y):
         # if field has value
         self.visibleField[x][y] = self.field[x][y]
@@ -289,6 +295,7 @@ class MineSweeper(object):
             y = int(input("Enter a number for y: "))
             game.pickField(x,y)
     
+    # basic class to let the game run for a single round
     def run(self):
         self.reset()
         state = self.visibleField
@@ -333,22 +340,8 @@ game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BO
 #game = MineSweeper(num_learning_rounds, BOARD_SIZE_X, BOARD_SIZE_Y ,NUMBER_OF_BOMBS, RMPlayer())
 total = num_learning_rounds + number_of_test_rounds
 
-#write in file
-#orig_stdout = sys.stdout
-#f = open('results5x5x3-combinations-Jovana.txt', 'w')
-#sys.stdout = f
-
 #measure time
 start_time = datetime.now() 
-
-#REWARD_GAME_WON_values = [0, 50, 150, 300]
-#REWARD_GAME_LOST_values = [0, -50, -150, -300]
-
-#for i in range(0, len(REWARD_GAME_WON_values)):
-#    REWARD_GAME_WON = REWARD_GAME_WON_values[i]
-#    for j in range(0, len(REWARD_GAME_LOST_values)):
-#        REWARD_GAME_LOST = REWARD_GAME_LOST_values[j]
-#CURRENT_GAME = 0
 
 print("Learning starts")
 for k in range(0,total):
@@ -357,10 +350,5 @@ for k in range(0,total):
 print("Test ended")
 print("------------------------------------")
 
-#game.play()
-
 time_elapsed = datetime.now() - start_time 
 print('Time elapsed (hh:mm:ss.ms) {}'.format(time_elapsed))
-
-#sys.stdout = orig_stdout
-#f.close()
