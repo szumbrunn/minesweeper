@@ -72,63 +72,53 @@ class DQNLearner(object):
         model = Sequential()
 
 
+	# Add 1st convolutional layer
+	# Input: 5x5x1
+        model.add(Conv2D(64, 3, padding='SAME', strides=1, activation="relu", kernel_initializer="lecun_uniform", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
 
-        model.add(Conv2D(64, 3, padding='SAME', strides=1, activation="tanh", kernel_initializer="lecun_uniform", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
+	# Add 2nd convolutional layer 
+	# Input: 5x5x64  --> Out: 3x3x64 if no padding else 5x5x64
+        model.add(Conv2D(64, 3, padding='SAME', strides=1, activation="relu", kernel_initializer="lecun_uniform"))
+        # Add 3rd convolutional layer
+        # Input: either 5x5x64 or 3x3x64 depending if padding is used before
+        # Output: 5x5x64 if padding is used, 1x1x64 without padding
+        model.add(Conv2D(64, 3, padding='SAME', strides=1, activation="relu"))
 
-
-        model.add(Conv2D(64, 3, strides=1, activation="tanh", kernel_initializer="lecun_uniform"))
-        model.add(Conv2D(64, 3, strides=1, activation="tanh"))
-
-
-        model.add(Conv2DTranspose(1, 5, strides=1, activation="sigmoid"))
-    #    model.add(UpSampling2D(size=(3, 3)))
-        #    model.add(MaxPooling2D(pool_size=(3,3), strides=None, padding='valid'))
-    #    model.add(Conv2DTranspose(1,5, strides=1, activation="tanh"))
-        model.add(Dense(100, activation='tanh', kernel_initializer="lecun_uniform"))
-        model.add(Dense(50, activation='tanh', kernel_initializer="lecun_uniform"))
+	# If padding is none, then a Conv2DTranspose is needed to match original dimension of 5x5
+    	# model.add(Conv2DTranspose(1,5, strides=1, activation="tanh"))
+        
+        # Add a fully connected layer with 100 units
+        model.add(Dense(100, activation='relu', kernel_initializer="lecun_uniform"))
+        # Add a fully connected layer with 50 nuits
+        model.add(Dense(50, activation='relu', kernel_initializer="lecun_uniform"))
+        # Add a fully connected layer with 1 uni
         model.add(Dense(1, activation='linear', kernel_initializer="lecun_uniform"))
 
 
 
-
+        # Plot the architecture of the model
 #        plot_model(model, to_file="model_conv.png", show_shapes=True, show_layer_names=True)
 
-#        model.add(Conv2D(5,3,2, activation="relu", input_shape=(BOARD_SIZE_X, BOARD_SIZE_Y, 1)))
-
-
-
-#        model.add(Dense(100, kernel_initializer='lecun_uniform'))
-#        model.add(Activation('relu'))
-#
-#        model.add(Dense(50, kernel_initializer='lecun_uniform'))
-#        model.add(Activation('relu'))
-#
-#        model.add(Dense(BOARD_VECTOR_LENGTH, kernel_initializer='lecun_uniform'))
-#        model.add(Activation('linear'))
-
+        # Specify optimizer and choose loss function
         rms = RMSprop()
         model.compile(loss='mse', optimizer=rms)
 
         self._model = model
-
-
 
         if LOAD_MODEL:
             self.load_model()
 
 
     def get_action(self, state):
-        # state = state.flatten()
+        # expand dimension of states to match 1x5x5x1, batchsize x width x height x value
         state = np.expand_dims(state, axis=2)
-        #state = np.expand_dims(state, axis=0)
-        #state = state.reshape(1,5,5)
         rewards = self._model.predict(np.expand_dims(state, axis=0), batch_size=1)
-        rewards = rewards #.flatten() #.reshape(5,5)
+        #rewards = rewards #.flatten() #.reshape(5,5)
         if DEBUG_PRINT:
             #print(rewards)
             pass
         if np.random.uniform(0,1) < self._epsilon:
-            #action = np.argmax(rewards[0])
+            # Calculate the indecies of the cell with max value x,y
             action_x = int(int(np.argmax(rewards)) / int(BOARD_SIZE_X))
             action_y = int(np.argmax(rewards) % BOARD_SIZE_Y)
 
@@ -143,7 +133,6 @@ class DQNLearner(object):
         return action_x, action_y
 
     def update(self,new_state,reward):
-#        new_state = new_state.flatten()
         if self._learning:
             new_state = np.expand_dims(new_state, axis=2)
             rewards = self._model.predict(np.expand_dims(new_state, axis=0), batch_size=1)
@@ -175,7 +164,7 @@ class MineSweeper(object):
     BOMB = 9 
     EMPTY = 0
     FLAGGED = 10 #not implemented
-    COVERED = -1 #change to -1, it was 99
+    COVERED = -1 
     fieldsToPick = 0
     dimX = 0
     dimY = 0
@@ -348,8 +337,6 @@ class MineSweeper(object):
             p1_action_x, p1_action_y = self.p.get_action(state)
         
             # Apply the action if hit
-#            v = np.zeros((BOARD_SIZE_X,BOARD_SIZE_Y))    #(BOARD_VECTOR_LENGTH)
-#            v[p1_action_x][p1_action_y] = 1
             reward = self.pickField(p1_action_x, p1_action_y)
             self.p.update(self.visibleField, reward) # Update the learner with a reward of 0 (No change)
 
